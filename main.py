@@ -5,6 +5,8 @@ from plots import plot_comparison, plot_three_signals
 from noise import add_noise, add_powerline, add_crosstalk, add_motion_artifacts
 from wavelet import wavelet_denoise
 from metrics import snr, median_frequency
+from butterwoth import butterworth_denoise
+from savgol import savgol_denoise
 
 RECORD = wfdb.rdrecord("data_set/session3_participant1_gesture10_trial1/session3_participant1_gesture10_trial1")
 SIGNAL = RECORD.p_signal
@@ -25,6 +27,8 @@ def main():
     denoised = np.zeros_like(noisy_data)
     for i in range(noisy_data.shape[1]):
         denoised[:, i] = wavelet_denoise(noisy_data[:, i])
+        # denoised[:, i] = butterworth_denoise(noisy_data[:, i], fs=RECORD.fs, lowcut=16.0, highcut=500.0, order=1) # 14 500 1 +1.5dB | 15 500 1 +1.6dB | 
+        # denoised[:, i] = savgol_denoise(noisy_data[:, i], window_length=23, polyorder=12) # 15 9 + 1.54dB | 17 11 +1.55dB |
 
     snr_before_all = []
     snr_after_all  = []
