@@ -1,0 +1,26 @@
+# encs
+venv/
+.venv/
+env/
+.env/
+virtualenv/
+venv-*
+.python-version
+
+.vscode
+*.csv
+*.pkl
+
+# cache and compiled python files
+__pycache__/
+*.py[cod]
+*$py.class
+dataset/
+data_set/
+
+#images
+*.png
+*.jpg
+*.jpeg
+*.pdf
+*.svg
