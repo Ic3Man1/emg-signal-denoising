@@ -5,7 +5,7 @@ from plots import plot_comparison, plot_three_signals, plot_many
 from noise import add_noise, add_powerline, add_crosstalk, add_motion_artifacts
 from wavelet import wavelet_denoise
 from metrics import snr, prd, correlation_coefficient, snr_improvement, spectral_distortion
-from savgol import savgol_denoise as custom_savgol_denoise
+from savgol import savgol_denoise
 from pca import pca_multichannel_denoise
 
 RECORD = wfdb.rdrecord("data_set/session3_participant1_gesture10_trial1/session3_participant1_gesture10_trial1")
@@ -26,7 +26,7 @@ DENOISE_METHODS = {
     },
     'savgol': {
         'label': 'Savitzky-Golay',
-        'func': custom_savgol_denoise,
+        'func': savgol_denoise,
         'parameter_sets': [
             {'window_length': 17, 'order': 11},
             {'window_length': 15, 'order': 7},
@@ -145,7 +145,7 @@ def compare_all_methods(clean_data, noisy_data, channel_idx=0):
 
 
 def main():
-    noisy_data = add_noise(DATA, 15)
+    noisy_data = add_noise(DATA, 10)
 
     signal_power = np.sqrt(np.mean(DATA**2))
     noisy_data = add_powerline(noisy_data, amplitude=0.05 * signal_power)

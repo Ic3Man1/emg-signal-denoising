@@ -41,16 +41,22 @@ def snr_improvement(clean, noisy, denoised):
     """Compute the SNR improvement in decibels after denoising."""
     return snr(clean, denoised) - snr(clean, noisy)
 
-
-def spectral_distortion(clean, denoised, fs=2048):
-    """Compute the average spectral distortion between clean and denoised PSDs.
+def spectral_distortion(clean, denoised, fs=2048, f_min=10, f_max=500):
+    """Compute the average spectral distortion between clean and denoised PSDs
+    within the useful EMG frequency range (default: 10 - 500 Hz).
 
     The metric measures how much the denoising changes the PSD shape. Values
     closer to zero indicate lower spectral distortion.
     """
-    _, psd_clean    = scipy.signal.welch(clean,    fs=fs, nperseg=512)
-    _, psd_denoised = scipy.signal.welch(denoised, fs=fs, nperseg=512)
+    freqs, psd_clean    = scipy.signal.welch(clean,    fs=fs, nperseg=512)
+    _,     psd_denoised = scipy.signal.welch(denoised, fs=fs, nperseg=512)
+
+    band_mask = (freqs >= f_min) & (freqs <= f_max)
+    
+    psd_clean_band = psd_clean[band_mask]
+    psd_denoised_band = psd_denoised[band_mask]
 
     eps = 1e-12
-    log_ratio = 10 * np.log10((psd_denoised + eps) / (psd_clean + eps))
+    log_ratio = 10 * np.log10((psd_denoised_band + eps) / (psd_clean_band + eps))
+    
     return np.sqrt(np.mean(log_ratio ** 2))
