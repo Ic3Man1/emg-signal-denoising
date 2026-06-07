@@ -30,35 +30,36 @@ def plot_comparison(original, noisy, fs=2048, n_samples=300, channel_idx=0):
     plt.show()
 
 
-def plot_three_signals(original, noisy, denoised, fs=2048, n_samples=1024, channel_idx=0):
+def plot_three_signals(original, noisy, denoised, fs=2048, n_samples=1024, channel_idx=0, method_name='Denoised'):
     """Plot original, noisy, and denoised signals for one EMG channel.
 
     Creates a stacked plot with three subplots and annotates the SNR before
     and after denoising so the quality improvement is easy to interpret.
+    The method name is used to label the denoised plot.
     """
     t = np.arange(n_samples) / fs
 
     fig, axes = plt.subplots(3, 1, figsize=(14, 8), sharex=True)
 
     axes[0].plot(t, original[:n_samples, channel_idx], color='steelblue', linewidth=1.2)
-    axes[0].set_title(f'Sygnał oryginalny, kanał {channel_idx}')
-    axes[0].set_ylabel('Amplituda [mV]')
+    axes[0].set_title(f'Original signal, channel {channel_idx}')
+    axes[0].set_ylabel('Amplitude [mV]')
     axes[0].grid(True, alpha=0.3)
 
     axes[1].plot(t, noisy[:n_samples, channel_idx], color='crimson', linewidth=0.8, alpha=0.85)
-    axes[1].set_title('Po zaszumieniu')
-    axes[1].set_ylabel('Amplituda [mV]')
+    axes[1].set_title('Noisy signal')
+    axes[1].set_ylabel('Amplitude [mV]')
     axes[1].grid(True, alpha=0.3)
 
     axes[2].plot(t, denoised[:n_samples, channel_idx], color='seagreen', linewidth=1.2)
-    axes[2].set_title('Po odszumieniu (PCA)')
-    axes[2].set_ylabel('Amplituda [mV]')
-    axes[2].set_xlabel('Czas [s]')
+    axes[2].set_title(f'Denoised signal ({method_name})')
+    axes[2].set_ylabel('Amplitude [mV]')
+    axes[2].set_xlabel('Time [s]')
     axes[2].grid(True, alpha=0.3)
 
     sb = snr(original[:, channel_idx], noisy[:, channel_idx])
     sa = snr(original[:, channel_idx], denoised[:, channel_idx])
-    fig.suptitle(f'SNR przed: {sb:.2f} dB,  SNR po: {sa:.2f} dB  (poprawa: {sa-sb:+.2f} dB)',
+    fig.suptitle(f'SNR before: {sb:.2f} dB, SNR after: {sa:.2f} dB  (Δ{sa-sb:+.2f} dB)',
                  fontsize=12, fontweight='bold')
 
     plt.tight_layout()
