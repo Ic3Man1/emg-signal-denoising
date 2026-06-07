@@ -97,25 +97,20 @@ def plot_many(data_dict, x_data=None):
         print("No data provided to plot!")
         return
 
-    # Tworzymy jeden wykres
     fig, ax = plt.subplots(figsize=(10, 6))
 
-    # Rysujemy każdą zmienną w pętli na tej samej osi (ax)
     for var_name, values in data_dict.items():
         if x_data is not None:
             ax.plot(x_data, values, label=var_name, linewidth=2)
         else:
             ax.plot(values, label=var_name, linewidth=2)
 
-    # Dekoracja wykresu
     ax.set_title("EMG Signals Comparison", fontsize=14, fontweight="bold")
     ax.set_xlabel("Time / Samples", fontsize=12)
     ax.set_ylabel("Amplitude / Value", fontsize=12)
 
-    # Włączamy siatkę (już z poprawną metodą .grid()!)
     ax.grid(True, linestyle="--", alpha=0.7)
 
-    # Dodajemy legendę, żeby było wiadomo, która linia to która zmienna
     ax.legend(loc="best", fontsize=10)
 
     plt.tight_layout()

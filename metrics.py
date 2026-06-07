@@ -19,6 +19,7 @@ def median_frequency(signal_1d, fs=2048):
     mf_index = np.searchsorted(cumulative_power, 0.5)
     return freqs[min(mf_index, len(freqs) - 1)]
 
+
 def prd(clean, denoised):
     """Compute the percent root-mean-square difference between clean and denoised signals.
 
@@ -40,6 +41,7 @@ def correlation_coefficient(clean, denoised):
 def snr_improvement(clean, noisy, denoised):
     """Compute the SNR improvement in decibels after denoising."""
     return snr(clean, denoised) - snr(clean, noisy)
+
 
 def spectral_distortion(clean, denoised, fs=2048, f_min=10, f_max=500):
     """Compute the average spectral distortion between clean and denoised PSDs
