@@ -99,3 +99,12 @@ def add_motion_artifacts(signal, fs=2048, n_artifacts=3, amplitude=0.3):
     
     artifact = amplitude * artifact / np.max(np.abs(artifact))  # normalizacja
     return signal + artifact[:, np.newaxis]
+
+def create_noisy_data(clean_signal, snr_db=10):
+    """Create a noisy version of the clean signal by adding multiple noise types."""
+    noisy = add_noise(clean_signal, snr_db)
+    noisy = add_powerline(noisy, amplitude=0.05 * np.sqrt(np.mean(clean_signal**2)))
+    noisy = add_crosstalk(noisy, strength=0.10)
+    noisy = add_motion_artifacts(noisy, amplitude=0.05 * np.sqrt(np.mean(clean_signal**2)))
+
+    return noisy
