@@ -70,6 +70,22 @@ def plot_three_signals(original, noisy, denoised, fs=2048, n_samples=1024, chann
     plt.savefig('emg_comparison.png', dpi=150, bbox_inches='tight')
     plt.show()
 
+def plot_one_signal(signal, fs=2048, n_samples=1024, channel_idx=0, method_name='Denoised', params=''):
+    """Plot a single EMG signal channel with proper labeling and grid."""
+    t = np.arange(n_samples) / fs
+    
+    plt.figure(figsize=(12, 4))
+    plt.plot(t, signal[:n_samples, channel_idx], color='navy', linewidth=1.5)
+    if params:
+        plt.title(f'Sygnał odszumiony ({method_name})\nParametry: {params}')
+    else:
+        plt.title(f'Sygnał odszumiony ({method_name})')
+    plt.xlabel("Czas [s]")
+    plt.ylabel("Amplituda [mV]")
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
 
 def plot_many(data_dict, x_data=None):
     """Plot multiple series on the same axes for EMG comparison.

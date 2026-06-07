@@ -1,6 +1,6 @@
 import numpy as np
 from metrics import snr, prd, correlation_coefficient, spectral_distortion
-from plots import plot_three_signals
+from plots import plot_three_signals, plot_one_signal
 from wavelet import wavelet_denoise
 from savgol import savgol_denoise
 from pca import pca_multichannel_denoise
@@ -121,10 +121,12 @@ def compare_parameters_for_method(method_name, clean_data, noisy_data, channel_i
         if best_result is None or metrics['delta_snr'] > best_result['metrics']['delta_snr']:
             best_result = {'params': params, 'metrics': metrics, 'denoised': denoised_data}
 
-        plot_three_signals(clean_data, noisy_data, denoised_data, channel_idx=channel_idx, method_name=method_label, params=param_text)
+        plot_one_signal(denoised_data, channel_idx=channel_idx, method_name=method_label, params=param_text)
+
 
     if best_result is not None:
         print(f"Best {method_label} variant: {format_parameters(best_result['params'])}  ΔSNR={best_result['metrics']['delta_snr']:.2f} dB")
+        plot_three_signals(clean_data, noisy_data, denoised_data, channel_idx=channel_idx, method_name=method_label, params=param_text)
 
     return best_result
 
