@@ -1,11 +1,10 @@
 import wfdb
 import numpy as np
 
-from plots import plot_comparison, plot_three_signals
+from plots import plot_comparison, plot_three_signals, plot_many
 from noise import add_noise, add_powerline, add_crosstalk, add_motion_artifacts
 from wavelet import wavelet_denoise
 from metrics import snr, median_frequency
-from butterwoth import  diy_butterworth_bandpass
 from savgol import custom_savgol_denoise
 from pca import pca_multichannel_denoise
 
@@ -26,11 +25,12 @@ def main():
     # plot_comparison(data, noisy_data)
 
     denoised = np.zeros_like(noisy_data)
+    denoised1 = np.zeros_like(noisy_data)
+    denoised2 = np.zeros_like(noisy_data)
     for i in range(noisy_data.shape[1]):
-        # denoised[:, i] = wavelet_denoise(noisy_data[:, i])
-        # denoised[:, i] = diy_butterworth_bandpass(noisy_data[:, i], fs=RECORD.fs, lowcut=15.0, highcut=500.0) # +2dB
-        # denoised[:, i] = custom_savgol_denoise(noisy_data[:, i], window_length=17, order=11)
-        denoised[:, i] = pca_multichannel_denoise(noisy_data, variance_to_keep=0.995)[:, i]
+        denoised[:, i] = wavelet_denoise(noisy_data[:, i])
+        denoised1[:, i] = custom_savgol_denoise(noisy_data[:, i], window_length=17, order=11)
+        denoised2[:, i] = pca_multichannel_denoise(noisy_data, variance_to_keep=0.995)[:, i]
 
     snr_before_all = []
     snr_after_all  = []
@@ -57,6 +57,15 @@ def main():
     # plot_comparison(data, denoised)
     # plot_comparison(denoised, noisy_data)
     plot_three_signals(DATA, noisy_data, denoised, channel_idx=0)
+    n_samples=1024
+    channel_idx=0
+    data = {
+        "savgol": denoised[:n_samples, channel_idx],
+        "wavelet": denoised1[:n_samples, channel_idx],
+        "pca": denoised2[:n_samples, channel_idx],
+        "oryginal": DATA[:n_samples, channel_idx],
+    }
+    plot_many(data)
 
 if __name__ == "__main__":
     main()

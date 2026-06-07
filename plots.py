@@ -59,46 +59,30 @@ import matplotlib.pyplot as plt
 
 
 def plot_many(data_dict, x_data=None):
-    num_variables = len(data_dict)
-
-    if num_variables == 0:
+    if not data_dict:
         print("No data provided to plot!")
         return
 
-    # 1. Dynamically calculate rows and columns (max 3 columns side-by-side)
-    num_cols = min(3, num_variables)
-    num_rows = math.ceil(num_variables / num_cols)
+    # Tworzymy jeden wykres
+    fig, ax = plt.subplots(figsize=(10, 6))
 
-    # 2. Create the grid of subplots
-    fig, axes = plt.subplots(
-        num_rows, num_cols, figsize=(5 * num_cols, 4 * num_rows)
-    )
-
-    # Flatten the axes array to easily iterate over it, regardless of grid shape
-    if num_variables == 1:
-        axes = [axes]
-    else:
-        axes = axes.flatten()
-
-    # 3. Plot each variable
-    for i, (var_name, values) in enumerate(data_dict.items()):
-        ax = axes[i]
-
-        # Use X-data if provided, otherwise default to indices
+    # Rysujemy każdą zmienną w pętli na tej samej osi (ax)
+    for var_name, values in data_dict.items():
         if x_data is not None:
-            ax.plot(x_data, values, marker="o", linewidth=2, color="tab:blue")
+            ax.plot(x_data, values, label=var_name, linewidth=2)
         else:
-            ax.plot(values, marker="o", linewidth=2, color="tab:blue")
+            ax.plot(values, label=var_name, linewidth=2)
 
-        ax.set_title(f"{var_name} Chart")
-        ax.set_grid(True, linestyle="--", alpha=0.7)
-        ax.set_xlabel("Index")
-        ax.set_ylabel("Value")
+    # Dekoracja wykresu
+    ax.set_title("EMG Signals Comparison", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Time / Samples", fontsize=12)
+    ax.set_ylabel("Amplitude / Value", fontsize=12)
 
-    # 4. Hide any unused (empty) subplots in the grid
-    for j in range(i + 1, len(axes)):
-        fig.delaxes(axes[j])
+    # Włączamy siatkę (już z poprawną metodą .grid()!)
+    ax.grid(True, linestyle="--", alpha=0.7)
 
-    # Adjust layout so titles and labels don't overlap
+    # Dodajemy legendę, żeby było wiadomo, która linia to która zmienna
+    ax.legend(loc="best", fontsize=10)
+
     plt.tight_layout()
     plt.show()
