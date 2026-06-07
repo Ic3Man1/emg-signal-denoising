@@ -5,7 +5,7 @@ from plots import plot_comparison, plot_three_signals, plot_many
 from noise import add_noise, add_powerline, add_crosstalk, add_motion_artifacts
 from wavelet import wavelet_denoise
 from metrics import snr, prd, correlation_coefficient, snr_improvement, spectral_distortion, median_frequency
-from savgol import custom_savgol_denoise
+from savgol import savgol_denoise
 from pca import pca_multichannel_denoise
 
 RECORD = wfdb.rdrecord("data_set/session3_participant1_gesture10_trial1/session3_participant1_gesture10_trial1")
@@ -15,7 +15,7 @@ EMG_INDICIES = [i for i, name in enumerate(RECORD.sig_name) if not('U' in name.u
 DATA = SIGNAL[:, EMG_INDICIES]
 
 def main():
-    noisy_data = add_noise(DATA, 15)
+    noisy_data = add_noise(DATA, 10)
 
     signal_power = np.sqrt(np.mean(DATA**2))
     noisy_data = add_powerline(noisy_data, amplitude=0.05 * signal_power)
@@ -29,7 +29,7 @@ def main():
     denoised2 = np.zeros_like(noisy_data)
     for i in range(noisy_data.shape[1]):
         denoised[:, i] = wavelet_denoise(noisy_data[:, i])
-        denoised1[:, i] = custom_savgol_denoise(noisy_data[:, i], window_length=17, order=11)
+        denoised1[:, i] = savgol_denoise(noisy_data[:, i], window_length=17, order=11)
         denoised2[:, i] = pca_multichannel_denoise(noisy_data, variance_to_keep=0.995)[:, i]
 
     snr_before_all = []
