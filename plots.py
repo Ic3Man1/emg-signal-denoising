@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 
 from metrics import snr
 
@@ -39,7 +40,7 @@ def plot_three_signals(original, noisy, denoised, fs=2048, n_samples=1024, chann
     axes[1].grid(True, alpha=0.3)
 
     axes[2].plot(t, denoised[:n_samples, channel_idx], color='seagreen', linewidth=1.2)
-    axes[2].set_title('Po odszumieniu (wavelet db4)')
+    axes[2].set_title('Po odszumieniu (PCA)')
     axes[2].set_ylabel('Amplituda [mV]')
     axes[2].set_xlabel('Czas [s]')
     axes[2].grid(True, alpha=0.3)
@@ -51,4 +52,53 @@ def plot_three_signals(original, noisy, denoised, fs=2048, n_samples=1024, chann
 
     plt.tight_layout()
     plt.savefig('emg_comparison.png', dpi=150, bbox_inches='tight')
+    plt.show()
+
+    import math
+import matplotlib.pyplot as plt
+
+
+def plot_many(data_dict, x_data=None):
+    num_variables = len(data_dict)
+
+    if num_variables == 0:
+        print("No data provided to plot!")
+        return
+
+    # 1. Dynamically calculate rows and columns (max 3 columns side-by-side)
+    num_cols = min(3, num_variables)
+    num_rows = math.ceil(num_variables / num_cols)
+
+    # 2. Create the grid of subplots
+    fig, axes = plt.subplots(
+        num_rows, num_cols, figsize=(5 * num_cols, 4 * num_rows)
+    )
+
+    # Flatten the axes array to easily iterate over it, regardless of grid shape
+    if num_variables == 1:
+        axes = [axes]
+    else:
+        axes = axes.flatten()
+
+    # 3. Plot each variable
+    for i, (var_name, values) in enumerate(data_dict.items()):
+        ax = axes[i]
+
+        # Use X-data if provided, otherwise default to indices
+        if x_data is not None:
+            ax.plot(x_data, values, marker="o", linewidth=2, color="tab:blue")
+        else:
+            ax.plot(values, marker="o", linewidth=2, color="tab:blue")
+
+        ax.set_title(f"{var_name} Chart")
+        ax.set_grid(True, linestyle="--", alpha=0.7)
+        ax.set_xlabel("Index")
+        ax.set_ylabel("Value")
+
+    # 4. Hide any unused (empty) subplots in the grid
+    for j in range(i + 1, len(axes)):
+        fig.delaxes(axes[j])
+
+    # Adjust layout so titles and labels don't overlap
+    plt.tight_layout()
     plt.show()
