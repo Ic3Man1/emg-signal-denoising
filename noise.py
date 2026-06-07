@@ -15,24 +15,33 @@ RING_NEIGHBORS = {
 }
 
 def add_noise(signal, snr_db):
+    """Add Gaussian noise to a signal at a target SNR in decibels.
+
+    The function computes the signal power per channel, scales Gaussian noise to
+    achieve the desired SNR, and returns the noisy signal.
+    """
     signal_power = np.mean(signal**2, axis=0, keepdims=True)
     snr_lin = 10**(snr_db / 10)
     noise_power = signal_power / snr_lin
     noise = np.random.normal(0, np.sqrt(noise_power), signal.shape)
     return signal + noise
 
+
 def add_powerline(signal, fs=2048, freq=50, amplitude=0.05):
+    """Add a sinusoidal powerline interference component to multichannel data."""
     t = np.arange(signal.shape[0]) / fs
     powerline = amplitude * np.sin(2 * np.pi * freq * t)
     return signal + powerline[:, np.newaxis]
 
 def get_ring(channel_idx):
+    """Return the predefined ring group for a channel index."""
     for ring_name, indices in RINGS.items():
         if channel_idx in indices:
             return ring_name
     return None
 
 def get_physical_neighbors(channel_idx, max_neighbors=4):
+    """Return nearby channel indices based on ring adjacency rules."""
     ring = get_ring(channel_idx)
     allowed_rings = RING_NEIGHBORS[ring]
     
@@ -46,6 +55,7 @@ def get_physical_neighbors(channel_idx, max_neighbors=4):
     return candidates[:max_neighbors]
 
 def add_crosstalk(signal, strength=0.15, max_neighbors=4):
+    """Simulate crosstalk by mixing neighbor channel signals into each channel."""
     result = signal.copy()
     n_channels = signal.shape[1]
     
@@ -66,6 +76,7 @@ def add_crosstalk(signal, strength=0.15, max_neighbors=4):
     return result
 
 def add_motion_artifacts(signal, fs=2048, n_artifacts=3, amplitude=0.3):
+    """Add synthetic motion artifacts to the signal as low-frequency distortions."""
     n_samples = signal.shape[0]
     t = np.arange(n_samples) / fs
     artifact = np.zeros(n_samples)

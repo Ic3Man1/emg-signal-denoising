@@ -5,6 +5,11 @@ import math
 from metrics import snr
 
 def plot_comparison(original, noisy, fs=2048, n_samples=300, channel_idx=0):
+    """Plot original and noisy signals for one EMG channel.
+
+    Shows a short time window of the clean and noisy signal waveforms for the
+    selected channel to visually compare the effect of noise.
+    """
     t = np.arange(n_samples) / fs
     
     plt.figure(figsize=(12, 6))
@@ -24,7 +29,13 @@ def plot_comparison(original, noisy, fs=2048, n_samples=300, channel_idx=0):
     plt.tight_layout()
     plt.show()
 
+
 def plot_three_signals(original, noisy, denoised, fs=2048, n_samples=1024, channel_idx=0):
+    """Plot original, noisy, and denoised signals for one EMG channel.
+
+    Creates a stacked plot with three subplots and annotates the SNR before
+    and after denoising so the quality improvement is easy to interpret.
+    """
     t = np.arange(n_samples) / fs
 
     fig, axes = plt.subplots(3, 1, figsize=(14, 8), sharex=True)
@@ -54,11 +65,13 @@ def plot_three_signals(original, noisy, denoised, fs=2048, n_samples=1024, chann
     plt.savefig('emg_comparison.png', dpi=150, bbox_inches='tight')
     plt.show()
 
-    import math
-import matplotlib.pyplot as plt
-
 
 def plot_many(data_dict, x_data=None):
+    """Plot multiple series on the same axes for EMG comparison.
+
+    Draws each data series in `data_dict` on a common chart. Optionally uses
+    provided x-axis values to align the series in time or sample index.
+    """
     if not data_dict:
         print("No data provided to plot!")
         return
